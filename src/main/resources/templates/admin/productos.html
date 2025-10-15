@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Gestión de Productos</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 th:text="${titulo}">
+                <i class="bi bi-box-seam"></i> Gestión de Productos
+            </h1>
+            <a th:href="@{/burgerapp/admin/productos/nuevo}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Nuevo Producto
+            </a>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <div th:if="${productos.empty}" class="text-center py-4">
+                    <div class="text-muted">
+                        <i class="bi bi-inboxes" style="font-size: 3rem;"></i>
+                        <h4 class="mt-3">No hay productos registrados</h4>
+                        <p class="mb-3">Comienza agregando tu primer producto al menú.</p>
+                        <a th:href="@{/burgerapp/admin/productos/nuevo}" class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> Crear Primer Producto
+                        </a>
+                    </div>
+                </div>
+
+                <div th:unless="${productos.empty}">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Imagen</th>
+                                    <th>Nombre</th>
+                                    <th>Descripción</th>
+                                    <th>Precio</th>
+                                    <th>Categoría</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="producto : ${productos}">
+                                    <td th:text="${producto.id}" class="fw-bold">1</td>
+                                    <td>
+                                        <img th:if="${producto.imagenUrl}" 
+                                             th:src="${producto.imagenUrl}" 
+                                             style="width: 50px; height: 50px; object-fit: cover;" 
+                                             class="rounded border">
+                                        <i th:unless="${producto.imagenUrl}" class="bi bi-image text-muted" style="font-size: 1.5rem;"></i>
+                                    </td>
+                                    <td th:text="${producto.nombre}">Hamburguesa Clásica</td>
+                                    <td>
+                                        <small class="text-muted" th:text="${#strings.abbreviate(producto.descripcion, 50)}">
+                                            Descripción abreviada
+                                        </small>
+                                    </td>
+                                    <td th:text="'$' + ${#numbers.formatDecimal(producto.precio, 1, 2)}" class="fw-bold text-success">$10.00</td>
+                                    <td>
+                                        <span class="badge" 
+                                              th:classappend="${producto.categoria == 'Hamburguesa'} ? 'bg-hamburguesa' : 
+                                                              (${producto.categoria == 'Bebida'} ? 'bg-bebida' : 
+                                                              (${producto.categoria == 'Acompañamiento'} ? 'bg-acompanamiento' : 'bg-postre'))"
+                                              th:text="${producto.categoria}">
+                                            Hamburguesa
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span th:if="${producto.disponible}" class="badge bg-success">
+                                            <i class="bi bi-check-circle"></i> Disponible
+                                        </span>
+                                        <span th:unless="${producto.disponible}" class="badge bg-secondary">
+                                            <i class="bi bi-x-circle"></i> No Disponible
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a th:href="@{/burgerapp/admin/productos/editar/{id}(id=${producto.id})}" 
+                                               class="btn btn-warning btn-sm">
+                                                <i class="bi bi-pencil"></i> Editar
+                                            </a>
+                                            <a th:href="@{/burgerapp/admin/productos/eliminar/{id}(id=${producto.id})}" 
+                                               class="btn btn-danger btn-sm"
+                                               onclick="return confirm('¿Estás seguro de eliminar el producto: ' + '${producto.nombre}' + '?')">
+                                                <i class="bi bi-trash"></i> Eliminar
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Estadísticas -->
+                    <div class="row mt-4">
+                        <div class="col-md-3">
+                            <div class="card text-white bg-primary">
+                                <div class="card-body">
+                                    <h5 th:text="${#lists.size(productos)}" class="card-title">0</h5>
+                                    <p class="card-text">Total Productos</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-white bg-success">
+                                <div class="card-body">
+                                    <h5 th:text="${#lists.size(productos.?[disponible == true])}" class="card-title">0</h5>
+                                    <p class="card-text">Disponibles</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-white bg-warning">
+                                <div class="card-body">
+                                    <h5 th:text="${#lists.size(productos.?[disponible == false])}" class="card-title">0</h5>
+                                    <p class="card-text">No Disponibles</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-white bg-info">
+                                <div class="card-body">
+                                    <h5 th:text="${#sets.size(#lists.convert(productos, :{#this.categoria}))}" class="card-title">0</h5>
+                                    <p class="card-text">Categorías</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

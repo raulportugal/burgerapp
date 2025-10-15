@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Mi Carrito</title>
+    <style>
+        body {
+            background-color: #fff8f1;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+        }
+
+        /* 🔸 Encabezado del carrito */
+        .top-bar {
+            background-color: #ff8c00;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            border-bottom: 3px solid #e67e00;
+        }
+
+        .top-bar h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .top-bar a {
+            color: white;
+            text-decoration: none;
+            background-color: #e67e00;
+            padding: 8px 16px;
+            border-radius: 25px;
+            transition: background-color 0.3s;
+            font-weight: 600;
+        }
+
+        .top-bar a:hover {
+            background-color: #cc6e00;
+        }
+
+        /* 🔸 Contenedor principal */
+        .carrito-container {
+            padding: 40px 20px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* 🔸 Tarjeta de productos */
+        .producto-item {
+            display: flex;
+            align-items: center;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: transform 0.2s;
+        }
+
+        .producto-item:hover {
+            transform: scale(1.02);
+        }
+
+        .producto-item img {
+            width: 90px;
+            height: 90px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .producto-info {
+            flex-grow: 1;
+            margin-left: 15px;
+        }
+
+        .producto-info h5 {
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .producto-info p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #777;
+        }
+
+        .producto-precio {
+            font-weight: 700;
+            color: #ff6b00;
+            font-size: 1rem;
+            margin-top: 5px;
+        }
+
+        /* 🔸 Controles */
+        .acciones {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: nowrap;
+        }
+
+        .acciones form {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .acciones input[type="number"] {
+            width: 70px;
+            height: 38px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 5px;
+            font-size: 0.9rem;
+            background-color: #fdfdfd;
+            transition: box-shadow 0.2s, border-color 0.2s;
+        }
+
+        .acciones input[type="number"]:focus {
+            outline: none;
+            border-color: #ff8c00;
+            box-shadow: 0 0 5px rgba(255, 140, 0, 0.4);
+        }
+
+        .btn-actualizar, .btn-eliminar {
+            border: none;
+            border-radius: 8px;
+            padding: 8px 14px;
+            color: white;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            height: 38px;
+        }
+
+        .btn-actualizar {
+            background-color: #ff8c00;
+        }
+
+        .btn-actualizar:hover {
+            background-color: #e67e00;
+        }
+
+        .btn-eliminar {
+            background-color: #d9534f;
+        }
+
+        .btn-eliminar:hover {
+            background-color: #b52b27;
+        }
+
+        /* 🔸 Resumen */
+        .resumen {
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 20px;
+        }
+
+        .resumen h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .resumen-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .resumen-total {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #e67e00;
+        }
+
+        .botones-acciones {
+            margin-top: 30px;
+        }
+
+        .resumen .btn {
+            width: 100%;
+            padding: 10px;
+            border-radius: 25px;
+            font-weight: 600;
+        }
+
+        .btn-pago {
+            background-color: #ff8c00;
+            color: white;
+            border: none;
+        }
+
+        .btn-pago:hover {
+            background-color: #e67e00;
+        }
+
+        .btn-seguir {
+            border: 2px solid #ff8c00;
+            color: #ff8c00;
+            background: none;
+            margin-top: 10px;
+        }
+
+        .btn-seguir:hover {
+            background-color: #ff8c00;
+            color: white;
+        }
+
+        /* 🔸 Carrito vacío */
+        .carrito-vacio {
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .carrito-vacio i {
+            font-size: 5rem;
+            color: #ccc;
+        }
+
+        .carrito-vacio h3 {
+            margin-top: 20px;
+            color: #333;
+        }
+
+        .carrito-vacio p {
+            color: #777;
+        }
+    </style>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <div class="top-bar">
+        <h1><i class="bi bi-cart3"></i> Mi Carrito</h1>
+        <a th:href="@{/menu}">🍔 Seguir Comprando</a>
+    </div>
+
+    <div class="carrito-container">
+
+        <!-- 🔸 Si el carrito está vacío -->
+        <div th:if="${#lists.isEmpty(carrito)}" class="carrito-vacio">
+            <i class="bi bi-cart-x"></i>
+            <h3>Tu carrito está vacío</h3>
+            <p>Agrega tus productos favoritos del menú 🍟</p>
+            <a th:href="@{/menu}" class="btn btn-seguir">Ver Menú</a>
+        </div>
+
+        <!-- 🔸 Si hay productos -->
+        <div th:unless="${#lists.isEmpty(carrito)}" class="row">
+            <div class="col-lg-8">
+                <div th:each="item : ${carrito}" class="producto-item">
+                    <img th:if="${item.producto.imagenUrl}" th:src="${item.producto.imagenUrl}" th:alt="${item.producto.nombre}">
+                    <div th:unless="${item.producto.imagenUrl}" style="width:90px; height:90px; background:#eee; border-radius:10px;"></div>
+
+                    <div class="producto-info">
+                        <h5 th:text="${item.producto.nombre}">Producto</h5>
+                        <p th:text="${item.producto.descripcion}">Descripción del producto</p>
+                        <div class="producto-precio" th:text="'S/ ' + ${#numbers.formatDecimal(item.producto.precio,1,2)}">S/ 15.00</div>
+                    </div>
+
+                    <div class="acciones">
+                        <form th:action="@{'/carrito/actualizar/' + ${item.producto.id}}" method="post">
+                            <input type="number" name="cantidad" th:value="${item.cantidad}" min="1" max="10">
+                            <button type="submit" class="btn-actualizar">
+                                <i class="bi bi-arrow-clockwise"></i> Actualizar
+                            </button>
+                        </form>
+
+                        <a th:href="@{'/carrito/eliminar/' + ${item.producto.id}}" class="btn-eliminar"
+                           onclick="return confirm('¿Eliminar este producto del carrito?')">
+                            <i class="bi bi-trash"></i> Eliminar
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="resumen">
+                    <h4><i class="bi bi-receipt"></i> Resumen del Pedido</h4>
+
+                    <div th:each="item : ${carrito}" class="resumen-item">
+                        <span th:text="${item.producto.nombre} + ' x ' + ${item.cantidad}">Producto x 1</span>
+                        <span th:text="'S/ ' + ${#numbers.formatDecimal(item.subtotal,1,2)}">S/ 10.00</span>
+                    </div>
+
+                    <div class="resumen-total">
+                        <span>Total</span>
+                        <span th:text="'S/ ' + ${#numbers.formatDecimal(total,1,2)}">S/ 30.00</span>
+                    </div>
+
+                    <div class="botones-acciones">
+                        <a th:href="@{/carrito/checkout}" class="btn btn-pago">
+                            <i class="bi bi-bag-check"></i> Proceder al Pago
+                        </a>
+                        <a th:href="@{/menu}" class="btn btn-seguir">
+                            <i class="bi bi-plus-circle"></i> Agregar Más Productos
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

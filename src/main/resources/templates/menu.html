@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Menú</title>
+    <style>
+        body {
+            background-color: #fff;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+        }
+
+        /* 🔸 Barra superior */
+        .top-bar {
+            background-color: #ff8c00;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 30px;
+            border-bottom: 3px solid #e67e00;
+        }
+
+        .top-bar h1 {
+            font-size: 1.4rem;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .top-bar a {
+            color: white;
+            text-decoration: none;
+            background-color: #e67e00;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: background-color 0.3s;
+            font-weight: 600;
+        }
+
+        .top-bar a:hover {
+            background-color: #cc6e00;
+        }
+
+        /* 🔸 Filtros de categoría */
+        .categoria-filtros {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .categoria-filtros button {
+            background: none;
+            border: 2px solid #ff8c00;
+            color: #ff8c00;
+            font-weight: 600;
+            padding: 8px 20px;
+            margin: 5px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .categoria-filtros button:hover,
+        .categoria-filtros button.active {
+            background-color: #ff8c00;
+            color: white;
+        }
+
+        /* 🔸 Productos estilo Burger King */
+        .producto-lista {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.2s;
+        }
+
+        .producto-lista:hover {
+            background-color: #fdf4ec;
+        }
+
+        .producto-lista img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-right: 20px;
+        }
+
+        .producto-info {
+            flex: 1;
+        }
+
+        .producto-nombre {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .producto-descripcion {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .producto-precio {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #ff6b00;
+            margin-right: 10px;
+        }
+
+        .btn-agregar-small {
+            background: linear-gradient(135deg, #ff6b00, #ff8c00);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            transition: background-color 0.2s;
+        }
+
+        .btn-agregar-small:hover {
+            background: linear-gradient(135deg, #e55c00, #e57c00);
+        }
+
+        @media (max-width: 576px) {
+            .producto-lista {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .producto-lista img {
+                width: 100%;
+                height: auto;
+                margin-bottom: 10px;
+            }
+
+            .producto-precio {
+                margin-top: 10px;
+            }
+        }
+    </style>
+
+    <script>
+        function filtrarCategoria(nombreCategoria) {
+            const productos = document.querySelectorAll('.producto-lista');
+            productos.forEach(p => {
+                const cat = p.getAttribute('data-categoria');
+                p.style.display = (nombreCategoria === 'todas' || cat === nombreCategoria) ? 'flex' : 'none';
+            });
+
+            const botones = document.querySelectorAll('.categoria-filtros button');
+            botones.forEach(b => b.classList.remove('active'));
+            document.querySelector(`[data-filtro='${nombreCategoria}']`).classList.add('active');
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const botones = document.querySelectorAll(".categoria-filtros button");
+            botones.forEach(boton => {
+                boton.addEventListener("click", () => {
+                    filtrarCategoria(boton.getAttribute("data-filtro"));
+                });
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div layout:fragment="content">
+
+        <!-- 🔹 Barra superior con link al carrito -->
+        <div class="top-bar">
+            <h1>Menú</h1>
+            <a th:href="@{/carrito}">🛒 Ver Carrito</a>
+        </div>
+
+        <div class="container py-5">
+            <h2 class="text-center mb-4" th:text="${titulo}">Nuestro Menú</h2>
+
+            <!-- 🔸 FILTROS DE CATEGORÍA -->
+            <div class="categoria-filtros">
+                <button data-filtro="todas" class="active">Todas</button>
+                <button th:each="categoria : ${categorias}"
+                        th:text="${categoria}"
+                        th:attr="data-filtro=${categoria}">
+                </button>
+            </div>
+
+            <!-- 🔸 LISTA DE PRODUCTOS -->
+            <div th:each="producto : ${productos}"
+                 th:attr="data-categoria=${producto.categoria}"
+                 class="producto-lista">
+                
+                <img th:if="${producto.imagenUrl}" th:src="${producto.imagenUrl}" th:alt="${producto.nombre}">
+                <div th:unless="${producto.imagenUrl}" style="width:100px; height:100px; background-color:#f0f0f0; border-radius:10px;"></div>
+
+                <div class="producto-info">
+                    <div class="producto-nombre" th:text="${producto.nombre}">Hamburguesa Clásica</div>
+                    <div class="producto-descripcion" th:text="${producto.descripcion}">
+                        Jugosa carne de res, lechuga, tomate, queso y salsa especial.
+                    </div>
+                </div>
+
+                <div class="producto-accion d-flex align-items-center">
+                    <div class="producto-precio" th:text="'S/ ' + ${#numbers.formatDecimal(producto.precio,1,2)}">S/ 15.00</div>
+                    <form th:action="@{'/carrito/agregar/' + ${producto.id}}" method="post">
+                        <input type="hidden" name="cantidad" value="1">
+                        <button type="submit" class="btn-agregar-small">Agregar</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 🔸 Si no hay productos -->
+            <div th:if="${#lists.isEmpty(productos)}" class="text-center py-5">
+                <p>No hay productos disponibles en este momento.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
