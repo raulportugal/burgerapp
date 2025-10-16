@@ -1,96 +1,152 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${titulo} + ' - BurgerApp'">BurgerApp</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+
     <style>
-        .card-producto {
-            transition: transform 0.2s;
-            height: 100%;
+        /* 🎨 Colores corporativos Burger King */
+        :root {
+            --bk-red: #c8102e;
+            --bk-gold: #ffcc29;
+            --bk-brown: #7b3f00;
         }
-        .card-producto:hover {
-            transform: translateY(-5px);
+
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background-color: #fff8f1;
         }
+
+        /* 🔹 Navbar */
+        .navbar {
+            background-color: var(--bk-red) !important;
+        }
+
+        .navbar-brand {
+            color: var(--bk-gold) !important;
+            font-weight: bold;
+        }
+
+        .navbar-brand:hover {
+            color: white !important;
+        }
+
+        .navbar-nav .nav-link {
+            color: white !important;
+            font-weight: 500;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: var(--bk-gold) !important;
+        }
+
         .carrito-badge {
             position: absolute;
             top: -8px;
             right: -8px;
+            background-color: var(--bk-gold) !important;
+            color: var(--bk-brown);
+            font-weight: bold;
         }
-        .categoria-btn {
-            transition: all 0.3s;
+
+        /* 🔸 Footer */
+        footer {
+            background-color: var(--bk-brown);
+            color: #fff;
         }
-        .categoria-btn.active {
-            background-color: #0d6efd;
+
+        footer small {
+            color: #ffdd77;
+        }
+
+        /* 🔸 Tarjetas y botones */
+        .btn-burger {
+            background-color: var(--bk-red);
+            color: white;
+            border: none;
+        }
+
+        .btn-burger:hover {
+            background-color: #a50f25;
+        }
+
+        .alert-success {
+            background-color: #ffcc29;
+            color: #7b3f00;
+            font-weight: bold;
+        }
+
+        .alert-danger {
+            background-color: #c8102e;
             color: white;
         }
-        .producto-imagen {
-            height: 150px;
-            object-fit: cover;
-            width: 100%;
-        }
-        .bg-hamburguesa { background-color: #dc3545 !important; }
-        .bg-bebida { background-color: #0dcaf0 !important; }
-        .bg-acompanamiento { background-color: #ffc107 !important; }
-        .bg-postre { background-color: #198754 !important; }
     </style>
 </head>
+
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <!-- 🔹 Navbar principal -->
+    <nav class="navbar navbar-expand-lg">
         <div class="container">
-            <a class="navbar-brand fw-bold" th:href="@{/burgerapp/menu}">
-                <i class="bi bi-egg-fried"></i> BurgerApp
+            <a class="navbar-brand fw-bold" th:href="@{/menu}">
+                🍔 BurgerApp
             </a>
-            
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link" th:href="@{/burgerapp/menu}">
+
+            <div class="navbar-nav ms-auto position-relative">
+                <a class="nav-link" th:href="@{/menu}">
                     <i class="bi bi-menu-up"></i> Menú
                 </a>
-                <a class="nav-link position-relative" th:href="@{/burgerapp/carrito}">
+                <a class="nav-link position-relative" th:href="@{/carrito}">
                     <i class="bi bi-cart3"></i> Carrito
-                    <span th:if="${#lists.size(session.carrito) > 0}" 
-                          class="badge bg-danger carrito-badge" 
+                    <!-- ✅ Corregido para evitar error si session.carrito es null -->
+                    <span th:if="${session.carrito != null and #lists.size(session.carrito) > 0}" 
+                          class="badge carrito-badge" 
                           th:text="${#lists.size(session.carrito)}">0</span>
                 </a>
-                <a class="nav-link" th:href="@{/burgerapp/admin/productos}">
+                <a class="nav-link" th:href="@{/admin/productos}">
                     <i class="bi bi-gear"></i> Admin
                 </a>
             </div>
         </div>
     </nav>
 
-    <!-- Contenido Principal -->
+    <!-- 🔸 Contenido principal -->
     <div class="container mt-4">
-        <!-- Mensajes de alerta -->
+
+        <!-- ✅ Mensajes -->
         <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
             <i class="bi bi-check-circle"></i>
             <span th:text="${success}"></span>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-        
+
         <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
             <i class="bi bi-exclamation-triangle"></i>
             <span th:text="${error}"></span>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
 
-        <!-- Contenido específico de cada página -->
+        <!-- 📦 Contenido dinámico -->
         <div layout:fragment="content">
-            <!-- Este contenido será reemplazado por las páginas hijas -->
+            <!-- El contenido específico de cada vista se carga aquí -->
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-dark text-light mt-5 py-4">
-        <div class="container text-center">
-            <p class="mb-0">&copy; 2024 BurgerApp - Tu tienda de hamburguesas favorita</p>
-            <small class="text-muted">Desarrollado con Spring Boot y Thymeleaf</small>
+    <!-- 🔹 Footer -->
+    <footer class="text-center mt-5 py-4">
+        <div class="container">
+            <p class="mb-0">&copy; 2025 BurgerApp - Tu tienda de hamburguesas favorita 🍟</p>
+            <small>Desarrollado con Spring Boot y Thymeleaf</small>
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/menu.js}" defer></script>
 </body>
 </html>

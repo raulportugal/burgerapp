@@ -1,0 +1,48 @@
+body {
+  background-color: #fff8f1;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+}
+
+/* Colores Burger King */
+.bg-bk-brown {
+  background-color: #522917 !important;
+}
+.bg-bk-red {
+  background-color: #d62300 !important;
+}
+.bg-bk-yellow {
+  background-color: #f2a900 !important;
+}
+.bg-bk-green {
+  background-color: #006341 !important;
+}
+.text-bk-red {
+  color: #d62300 !important;
+}
+.text-bk-yellow {
+  color: #f2a900 !important;
+}
+
+.card {
+  border-radius: 1rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+.btn-bk {
+  background-color: #d62300;
+  border: none;
+  color: white;
+}
+
+.btn-bk:hover {
+  background-color: #b51e00;
+}
+
+.form-floating > label {
+  color: #6c757d;
+}
+
+.sticky-top {
+  position: sticky;
+  top: 20px;
+}

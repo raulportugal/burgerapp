@@ -1,159 +1,251 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout}">
-<head>
-    <title>Checkout</title>
-</head>
-<body>
-    <div layout:fragment="content">
-        <div class="row justify-content-center">
-            <div class="col-lg-10">
-                <h1 class="text-center mb-4" th:text="${titulo}">
-                    <i class="bi bi-bag-check"></i> Confirmar Pedido
-                </h1>
-                
-                <div class="row">
-                    <!-- Resumen del Pedido -->
-                    <div class="col-lg-8">
-                        <div class="card">
-                            <div class="card-header bg-primary text-white">
-                                <h5 class="mb-0"><i class="bi bi-receipt"></i> Resumen de tu Pedido</h5>
-                            </div>
-                            <div class="card-body">
-                                <div th:each="item : ${carrito}" class="d-flex align-items-center border-bottom pb-3 mb-3">
-                                    <div class="flex-shrink-0">
-                                        <div th:if="${item.producto.imagenUrl}" 
-                                             class="bg-light rounded" 
-                                             style="width: 60px; height: 60px; background-size: cover; background-position: center;"
-                                             th:style="'background-image: url(' + ${item.producto.imagenUrl} + ')'">
-                                        </div>
-                                        <div th:unless="${item.producto.imagenUrl}" 
-                                             class="bg-light rounded d-flex align-items-center justify-content-center"
-                                             style="width: 60px; height: 60px;">
-                                            <i class="bi bi-image text-muted"></i>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="flex-grow-1 ms-3">
-                                        <h6 class="mb-1" th:text="${item.producto.nombre}">Producto</h6>
-                                        <p class="text-muted mb-1 small" th:text="'Cantidad: ' + ${item.cantidad} + ' x $' + ${#numbers.formatDecimal(item.producto.precio, 1, 2)}">
-                                            Cantidad: 1 x $10.00
-                                        </p>
-                                        <p class="text-primary fw-bold mb-0" 
-                                           th:text="'Subtotal: $' + ${#numbers.formatDecimal(item.subtotal, 1, 2)}">
-                                            Subtotal: $10.00
-                                        </p>
-                                    </div>
-                                </div>
-                                
-                                <div class="d-flex justify-content-between border-top pt-3">
-                                    <strong class="h5">Total a Pagar:</strong>
-                                    <strong class="text-primary h4" 
-                                            th:text="'$' + ${#numbers.formatDecimal(total, 1, 2)}">
-                                        $20.00
-                                    </strong>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Información de Contacto -->
-                        <div class="card mt-4">
-                            <div class="card-header">
-                                <h5 class="mb-0"><i class="bi bi-person-lines-fill"></i> Información de Contacto</h5>
-                            </div>
-                            <div class="card-body">
-                                <form th:action="@{/carrito/confirmar}" method="post">
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label for="nombre" class="form-label">Nombre Completo *</label>
-                                            <input type="text" class="form-control" id="nombre" name="nombre" required
-                                                   placeholder="Ej: Juan Pérez">
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label for="telefono" class="form-label">Teléfono *</label>
-                                            <input type="tel" class="form-control" id="telefono" name="telefono" required
-                                                   placeholder="Ej: 123456789">
-                                        </div>
-                                        <div class="col-12 mb-3">
-                                            <label for="email" class="form-label">Email *</label>
-                                            <input type="email" class="form-control" id="email" name="email" required
-                                                   placeholder="Ej: juan@example.com">
-                                        </div>
-                                        <div class="col-12 mb-3">
-                                            <label for="direccion" class="form-label">Dirección de Entrega *</label>
-                                            <textarea class="form-control" id="direccion" name="direccion" rows="3" required
-                                                      placeholder="Ej: Av. Principal #123, Ciudad, Departamento"></textarea>
-                                        </div>
-                                        <div class="col-12 mb-3">
-                                            <label for="notas" class="form-label">Notas Adicionales</label>
-                                            <textarea class="form-control" id="notas" name="notas" rows="2" 
-                                                      placeholder="Ej: Sin cebolla, timbre azul, entrega en portería..."></textarea>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-                                        <a th:href="@{/carrito}" class="btn btn-outline-secondary me-md-2">
-                                            <i class="bi bi-arrow-left"></i> Volver al Carrito
-                                        </a>
-                                        <button type="submit" class="btn btn-success btn-lg">
-                                            <i class="bi bi-check-circle"></i> Confirmar Pedido
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Información de la Tienda -->
-                    <div class="col-lg-4">
-                        <div class="card sticky-top" style="top: 20px;">
-                            <div class="card-header bg-dark text-white">
-                                <h5 class="mb-0"><i class="bi bi-shop"></i> BurgerApp</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="mb-3">
-                                    <i class="bi bi-clock text-primary"></i> 
-                                    <strong>Horario:</strong><br>
-                                    <small>Lunes a Domingo: 11:00 - 23:00</small>
-                                </div>
-                                <div class="mb-3">
-                                    <i class="bi bi-telephone text-primary"></i> 
-                                    <strong>Teléfono:</strong><br>
-                                    <small>+1 234 567 890</small>
-                                </div>
-                                <div class="mb-3">
-                                    <i class="bi bi-geo-alt text-primary"></i> 
-                                    <strong>Dirección:</strong><br>
-                                    <small>Av. Principal #123, Ciudad</small>
-                                </div>
-                                <div class="mb-3">
-                                    <i class="bi bi-truck text-primary"></i> 
-                                    <strong>Envío:</strong><br>
-                                    <small>Gratis en pedidos mayores a $20</small>
-                                </div>
-                                
-                                <div class="alert alert-info mt-3">
-                                    <small>
-                                        <i class="bi bi-info-circle"></i> 
-                                        <strong>Tiempo de entrega estimado:</strong><br>
-                                        30-45 minutos
-                                    </small>
-                                </div>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout}"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Checkout - BurgerApp</title>
 
-                                <div class="alert alert-warning mt-3">
-                                    <small>
-                                        <i class="bi bi-credit-card"></i> 
-                                        <strong>Métodos de pago:</strong><br>
-                                        Efectivo, Tarjeta, Transferencia
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <!-- Bootstrap 5.3 CDN -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" th:href="@{/css/checkout.css}" />
+  </head>
+  <body>
+    <div layout:fragment="content" class="container py-5">
+      <div class="text-center mb-4">
+        <h1 class="fw-bold text-bk-red">
+          <i class="bi bi-bag-check"></i> Confirmar Pedido
+        </h1>
+      </div>
+
+      <div class="row justify-content-center">
+        <!-- Resumen del pedido -->
+        <div class="col-lg-8 mb-4">
+          <div class="card">
+            <div class="card-header bg-bk-brown text-white">
+              <h5 class="mb-0">
+                <i class="bi bi-receipt"></i> Resumen de tu Pedido
+              </h5>
             </div>
+            <div class="card-body">
+              <div
+                th:each="item : ${carrito}"
+                class="d-flex align-items-center border-bottom pb-3 mb-3"
+              >
+                <div class="flex-shrink-0">
+                  <div
+                    th:if="${item.producto.imagenUrl}"
+                    class="rounded"
+                    style="
+                      width: 70px;
+                      height: 70px;
+                      background-size: cover;
+                      background-position: center;
+                    "
+                    th:style="'background-image: url(' + ${item.producto.imagenUrl} + ')'"
+                  ></div>
+                  <div
+                    th:unless="${item.producto.imagenUrl}"
+                    class="bg-light rounded d-flex align-items-center justify-content-center"
+                    style="width: 70px; height: 70px"
+                  >
+                    <i class="bi bi-image text-muted"></i>
+                  </div>
+                </div>
+
+                <div class="flex-grow-1 ms-3">
+                  <h6 class="mb-1" th:text="${item.producto.nombre}">
+                    Producto
+                  </h6>
+                  <p
+                    class="text-muted small mb-1"
+                    th:text="'Cantidad: ' + ${item.cantidad} + ' x S/ ' + ${#numbers.formatDecimal(item.producto.precio, 1, 2, 'POINT')}"
+                  >
+                    Cantidad: 1 x S/ 15.00
+                  </p>
+                  <p
+                    class="fw-bold text-bk-red mb-0"
+                    th:text="'Subtotal: S/ ' + ${#numbers.formatDecimal(item.subtotal, 1, 2, 'POINT')}"
+                  >
+                    Subtotal: S/ 15.00
+                  </p>
+                </div>
+              </div>
+
+              <div class="d-flex justify-content-between border-top pt-3">
+                <strong class="h5">Total a Pagar:</strong>
+                <strong
+                  class="text-bk-red h4"
+                  th:text="'S/ ' + ${#numbers.formatDecimal(total, 1, 2, 'POINT')}"
+                >
+                  S/ 30.00
+                </strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Formulario de contacto -->
+          <div class="card mt-4">
+            <div class="card-header bg-bk-yellow">
+              <h5 class="mb-0 text-dark">
+                <i class="bi bi-person-lines-fill"></i> Información de Contacto
+              </h5>
+            </div>
+            <div class="card-body">
+              <form
+                th:action="@{/carrito/confirmar}"
+                method="post"
+                class="needs-validation"
+                novalidate
+              >
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <div class="form-floating">
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="nombre"
+                        name="nombre"
+                        placeholder="Nombre completo"
+                        required
+                      />
+                      <label for="nombre">Nombre completo *</label>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-floating">
+                      <input
+                        type="tel"
+                        class="form-control"
+                        id="telefono"
+                        name="telefono"
+                        placeholder="Teléfono"
+                        required
+                      />
+                      <label for="telefono">Teléfono *</label>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="form-floating">
+                      <input
+                        type="email"
+                        class="form-control"
+                        id="email"
+                        name="email"
+                        placeholder="Correo electrónico"
+                        required
+                      />
+                      <label for="email">Correo electrónico *</label>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="form-floating">
+                      <textarea
+                        class="form-control"
+                        id="direccion"
+                        name="direccion"
+                        placeholder="Dirección de entrega"
+                        style="height: 100px"
+                        required
+                      ></textarea>
+                      <label for="direccion"
+                        >Dirección de entrega y distrito *</label
+                      >
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="form-floating">
+                      <textarea
+                        class="form-control"
+                        id="notas"
+                        name="notas"
+                        placeholder="Notas adicionales"
+                        style="height: 80px"
+                      ></textarea>
+                      <label for="notas"
+                        >Indique una refrencia de su dirección</label
+                      >
+                    </div>
+                  </div>
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                  <a
+                    th:href="@{/carrito}"
+                    class="btn btn-outline-secondary me-md-2"
+                  >
+                    <i class="bi bi-arrow-left"></i> Volver al Carrito
+                  </a>
+                  <button type="submit" class="btn btn-bk btn-lg">
+                    <i class="bi bi-check-circle"></i> Confirmar Pedido
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
+
+        <!-- Información de la tienda -->
+        <div class="col-lg-4">
+          <div class="card sticky-top">
+            <div class="card-header bg-bk-green text-white">
+              <h5 class="mb-0"><i class="bi bi-shop"></i> BurgerApp</h5>
+            </div>
+            <div class="card-body">
+              <p>
+                <i class="bi bi-clock text-bk-red"></i> <strong>Horario:</strong
+                ><br />
+                <small>Lunes a Domingo: 11:00 - 23:00</small>
+              </p>
+
+              <p>
+                <i class="bi bi-telephone text-bk-red"></i>
+                <strong>Teléfono:</strong><br />
+                <small>+51 987 654 321</small>
+              </p>
+
+              <p>
+                <i class="bi bi-geo-alt text-bk-red"></i>
+                <strong>Dirección:</strong><br />
+                <small>Av. Principal #123, Lima</small>
+              </p>
+
+              <p>
+                <i class="bi bi-truck text-bk-red"></i> <strong>Envío:</strong
+                ><br />
+                <small>Gratis en pedidos mayores a S/ 40.00</small>
+              </p>
+
+              <div class="alert alert-info mt-3">
+                <small
+                  ><i class="bi bi-info-circle"></i>
+                  <strong>Entrega estimada:</strong> 30-45 minutos</small
+                >
+              </div>
+              <div class="alert alert-warning mt-3">
+                <small
+                  ><i class="bi bi-credit-card"></i>
+                  <strong>Métodos de pago:</strong> Efectivo, Tarjeta,
+                  Yape</small
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-</body>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
 </html>

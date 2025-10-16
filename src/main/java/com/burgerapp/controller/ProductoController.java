@@ -57,7 +57,7 @@ public class ProductoController {
         redirectAttributes.addFlashAttribute("success", 
             producto.getId() == null ? "Producto creado exitosamente" : "Producto actualizado exitosamente");
         
-        return "redirect:/burgerapp/admin/productos";
+        return "redirect:/admin/productos";
     }
     
     @GetMapping("/editar/{id}")
@@ -66,7 +66,7 @@ public class ProductoController {
         
         if (producto.isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Producto no encontrado");
-            return "redirect:/burgerapp/admin/productos";
+            return "redirect:/admin/productos";
         }
         
         model.addAttribute("producto", producto.get());
@@ -83,6 +83,6 @@ public class ProductoController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error al eliminar el producto");
         }
-        return "redirect:/burgerapp/admin/productos";
+        return "redirect:/admin/productos";
     }
 }

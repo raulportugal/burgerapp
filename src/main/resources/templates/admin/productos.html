@@ -11,7 +11,7 @@
             <h1 th:text="${titulo}">
                 <i class="bi bi-box-seam"></i> Gestión de Productos
             </h1>
-            <a th:href="@{/burgerapp/admin/productos/nuevo}" class="btn btn-primary">
+            <a th:href="@{/admin/productos/nuevo}" class="btn btn-primary">
                 <i class="bi bi-plus-circle"></i> Nuevo Producto
             </a>
         </div>
@@ -60,7 +60,13 @@
                                             Descripción abreviada
                                         </small>
                                     </td>
-                                    <td th:text="'$' + ${#numbers.formatDecimal(producto.precio, 1, 2)}" class="fw-bold text-success">$10.00</td>
+
+                                    <!-- 🔸 Precio en Soles con punto decimal -->
+                                    <td th:text="'S/ ' + ${#numbers.formatDecimal(producto.precio, 1, 2, 'POINT')}" 
+                                        class="fw-bold text-success">
+                                        S/ 10.00
+                                    </td>
+
                                     <td>
                                         <span class="badge" 
                                               th:classappend="${producto.categoria == 'Hamburguesa'} ? 'bg-hamburguesa' : 
@@ -80,11 +86,11 @@
                                     </td>
                                     <td>
                                         <div class="btn-group" role="group">
-                                            <a th:href="@{/burgerapp/admin/productos/editar/{id}(id=${producto.id})}" 
+                                            <a th:href="@{/admin/productos/editar/{id}(id=${producto.id})}" 
                                                class="btn btn-warning btn-sm">
                                                 <i class="bi bi-pencil"></i> Editar
                                             </a>
-                                            <a th:href="@{/burgerapp/admin/productos/eliminar/{id}(id=${producto.id})}" 
+                                            <a th:href="@{/admin/productos/eliminar/{id}(id=${producto.id})}" 
                                                class="btn btn-danger btn-sm"
                                                onclick="return confirm('¿Estás seguro de eliminar el producto: ' + '${producto.nombre}' + '?')">
                                                 <i class="bi bi-trash"></i> Eliminar
@@ -96,7 +102,7 @@
                         </table>
                     </div>
 
-                    <!-- Estadísticas -->
+                    <!-- 🔹 Estadísticas -->
                     <div class="row mt-4">
                         <div class="col-md-3">
                             <div class="card text-white bg-primary">
